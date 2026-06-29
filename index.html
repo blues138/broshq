@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Bros | HQ Live Terminal Gateway</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <nav class="hq-nav-bar">
+        <div class="logo">THE <span>BROS</span></div>
+        <div id="systemStateText" class="status-badge">GATEWAY INITIALIZING</div>
+    </nav>
+
+    <div class="workspace-grid">
+        
+        <!-- LEFT COLUMN: GATE ENTRY FORM & DESK ACTIONS -->
+        <main class="panel-box">
+            <h2>Player Entry Portal</h2>
+            <p class="panel-subtext">Players enter details. First 2 sign-ins are auto-approved as Owner and Co-Owner.</p>
+
+            <form id="entryForm" onsubmit="handlePlayerSubmission(event)">
+                <div class="form-group-row">
+                    <label for="pName">Choose Your Name / Handle</label>
+                    <input type="text" id="pName" required placeholder="Enter custom username">
+                </div>
+                <div class="form-group-row">
+                    <label for="pPass">Choose Your Hidden Password</label>
+                    <input type="password" id="pPass" required placeholder="••••••••">
+                </div>
+                <button type="submit" id="submitButtonAction" class="core-action-btn btn-blue">Send Request To Terminal</button>
+            </form>
+
+            <!-- LIVE MANAGEMENT MODERATOR CONSOLE -->
+            <section id="decisionControlModule" class="owner-moderator-panel">
+                <div class="owner-prompt-line">
+                    What to make <span><span id="targetPlayerNameText">Player</span></span>?
+                </div>
+                <div class="decision-button-grid">
+                    <button class="rank-btn btn-green" onclick="assignRankLevelDecision('normal')">Normal</button>
+                    <button class="rank-btn btn-blue-opt" onclick="assignRankLevelDecision('coadmin')">Co Admin</button>
+                    <button class="rank-btn btn-red" onclick="assignRankLevelDecision('admin')">Admin</button>
+                </div>
+            </section>
+        </main>
+
+        <!-- RIGHT COLUMN: DYNAMIC DIGITAL CARD & HISTORICAL LEDGER -->
+        <aside class="panel-box rendering-column">
+            
+            <div id="activeKeycardNode" class="digital-keycard card-initial">
+                <div class="card-top-header">
+                    <span>★ BROS HQ ACCESS PASS ★</span>
+                    <span>SEC_V9.2</span>
+                </div>
+                <div class="card-main-body">
+                    <div class="card-data-line"><strong>HOLDER NAME:</strong> <span id="cardNameField">AWAITING REQUEST...</span></div>
+                    <div class="card-data-line"><strong>LEVEL COLOR:</strong> <span id="cardLevelField">PENDING ROUTINE</span></div>
+                    <div class="card-data-line"><strong>SECRET KEY:</strong> <span id="cardPassField" class="security-blackout" onclick="this.classList.toggle('reveal')">••••••••</span></div>
+                </div>
+                <div class="card-bottom-footer">
+                    <span>VALIDATION CODE:</span>
+                    <strong>kfcisbad123</strong>
+                </div>
+            </div>
+
+            <!-- ENHANCED LEDGER REGISTRY WITH PASSWORD REVEAL OVERRIDE -->
+            <section class="ledger-wrapper-block">
+                <div class="ledger-header-flex">
+                    <h3>🗄️ Main Registered HQ Ledger Logs</h3>
+                    <button type="button" class="reveal-master-btn" onclick="toggleMasterPasswordVisibility(this)">Show Saved Passwords</button>
+                </div>
+                <div id="ledgerLogsContainer" class="ledger-scroll-view">
+                    <div class="empty-log-state-msg">Ledger log memory offline. Send entry request.</div>
+                </div>
+            </section>
+
+        </aside>
+    </div>
+
+    <!-- Script sequence load lines -->
+    <script src="database-engine.js"></script>
+    <script src="terminal-logic.js"></script>
+</body>
+</html>
