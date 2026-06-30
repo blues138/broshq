@@ -4,82 +4,194 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>The Bros | HQ Live Terminal Gateway</title>
-    <link rel="stylesheet" href="style.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #060913;
+            color: #ffffff;
+            padding: 20px;
+            line-height: 1.5;
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto 20px auto;
+            border-bottom: 2px solid #1e293b;
+            padding-bottom: 15px;
+        }
+
+        .logo { font-size: 24px; font-weight: 900; color: #2563eb; letter-spacing: 1px; }
+        .logo span { color: #fff; }
+        .status { font-size: 11px; background: #111827; border: 1px solid #374151; padding: 6px 12px; border-radius: 4px; color: #4ade80; font-weight: bold; text-transform: uppercase; }
+
+        .workspace {
+            display: grid;
+            grid-template-columns: 1fr 1.2fr;
+            gap: 25px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        @media (max-width: 900px) {
+            .workspace { grid-template-columns: 1fr; }
+        }
+
+        .box {
+            background-color: #0f172a;
+            border: 1px solid #1e2937;
+            border-radius: 12px;
+            padding: 25px;
+        }
+
+        h2 { font-size: 20px; text-transform: uppercase; margin-bottom: 5px; color: #3b82f6; }
+        .sub { color: #9ca3af; font-size: 13px; margin-bottom: 25px; }
+
+        .group { margin-bottom: 18px; }
+        label { display: block; font-size: 12px; text-transform: uppercase; color: #9ca3af; font-weight: bold; margin-bottom: 8px; }
+        input { width: 100%; padding: 12px; background: #1e293b; border: 2px solid #334155; border-radius: 6px; color: #fff; font-size: 16px; }
+        input:focus { outline: none; border-color: #2563eb; }
+
+        .btn { width: 100%; padding: 14px; border: none; border-radius: 6px; font-size: 14px; font-weight: bold; text-transform: uppercase; cursor: pointer; transition: background 0.2s; }
+        .btn-blue { background: #2563eb; color: #fff; }
+        .btn-blue:hover { background: #1d4ed8; }
+
+        .owner-control-module {
+            display: none; 
+            background: linear-gradient(135deg, #1e1b4b, #0f172a);
+            border: 2px solid #4ade80;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 25px;
+            box-shadow: 0 0 15px rgba(74, 222, 128, 0.1);
+        }
+
+        .owner-prompt {
+            font-size: 16px;
+            font-weight: bold;
+            color: #4ade80;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-bottom: 1px solid rgba(74, 222, 128, 0.2);
+            padding-bottom: 8px;
+        }
+
+        .owner-prompt span { color: #ffffff; text-decoration: underline; background: rgba(0,0,0,0.3); padding: 2px 6px; border-radius: 4px; }
+        .action-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+        .action-grid button { padding: 12px; border: none; border-radius: 4px; font-weight: bold; font-size: 12px; cursor: pointer; text-transform: uppercase; color: #ffffff; }
+
+        .btn-green { background-color: #16a34a; }
+        .btn-green:hover { background-color: #15803d; }
+        .btn-blue-opt { background-color: #2563eb; }
+        .btn-blue-opt:hover { background-color: #1d4ed8; }
+        .btn-red { background-color: #dc2626; }
+        .btn-red:hover { background-color: #b91c1c; }
+
+        .display-view { display: flex; flex-direction: column; gap: 20px; }
+        .keycard { width: 100%; padding: 25px; border-radius: 12px; font-family: 'Courier New', Courier, monospace; box-shadow: 0 10px 25px rgba(0,0,0,0.5); border: 3px solid #ffffff; }
+        
+        .card-initial { background: #334155; color: #9ca3af; border: 2px dashed #4b5563; }
+        .card-owner { background: #000000; color: #ffffff; border-color: #2563eb; }
+        .card-coowner { background: #4ade80; color: #0f172a; border-color: #ffffff; }
+        .card-normal { background: #16a34a; color: #ffffff; }
+        .card-coadmin { background: #2563eb; color: #ffffff; }
+        .card-admin { background: #dc2626; color: #ffffff; }
+
+        .card-header { display: flex; justify-content: space-between; border-bottom: 2px dashed currentColor; padding-bottom: 8px; margin-bottom: 15px; font-weight: bold; }
+        .card-field { margin-bottom: 10px; font-size: 15px; }
+        .card-field strong { font-family: sans-serif; font-size: 12px; opacity: 0.8; display: inline-block; width: 100px; }
+        .blackout { background: #000; color: #000; padding: 2px 6px; border-radius: 4px; cursor: pointer; }
+        .card-coowner .blackout { background: #0f172a; color: #0f172a; }
+        .blackout.reveal { background: rgba(255,255,255,0.2) !important; color: currentColor !important; }
+        .card-footer { display: flex; justify-content: space-between; font-size: 11px; font-family: sans-serif; border-top: 1px solid currentColor; padding-top: 8px; margin-top: 15px; }
+
+        .ledger-box-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+        .ledger-box h3 { font-size: 12px; color: #9ca3af; text-transform: uppercase; letter-spacing: 0.5px; }
+        .ledger-view { background: #020617; border: 1px solid #1e293b; border-radius: 6px; max-height: 200px; overflow-y: auto; padding: 10px; }
+        .ledger-row { display: flex; justify-content: space-between; background: #0f172a; padding: 8px 12px; border-radius: 4px; font-size: 13px; margin-bottom: 6px; border-left: 4px solid #fff; align-items: center; }
+        .empty-msg { text-align: center; color: #4b5563; font-style: italic; font-size: 13px; padding: 15px 0; }
+        
+        .log-pass-span { font-family: monospace; color: #64748b; background: rgba(0,0,0,0.4); padding: 1px 5px; border-radius: 3px; margin-left: 5px; display: none; }
+        .ledger-view.show-passwords .log-pass-span { display: inline-block; }
+        .reveal-master-btn { background: #1e293b; border: 1px solid #334155; padding: 4px 10px; color: #9ca3af; border-radius: 4px; font-size: 11px; font-weight: bold; cursor: pointer; text-transform: uppercase; }
+        .reveal-master-btn:hover { background: #334155; color: #fff; }
+    </style>
 </head>
 <body>
 
-    <nav class="hq-nav-bar">
+    <nav>
         <div class="logo">THE <span>BROS</span></div>
-        <div id="systemStateText" class="status-badge">GATEWAY INITIALIZING</div>
+        <div id="systemStateText" class="status">GATEWAY INITIALIZING</div>
     </nav>
 
-    <div class="workspace-grid">
-        
-        <!-- LEFT COLUMN: GATE ENTRY FORM & DESK ACTIONS -->
-        <main class="panel-box">
+    <div class="workspace">
+        <div class="box">
             <h2>Player Entry Portal</h2>
-            <p class="panel-subtext">Players enter details. First 2 sign-ins are auto-approved as Owner and Co-Owner.</p>
+            <p class="sub">Players enter details. The Owners decide their rank level color afterward.</p>
 
             <form id="entryForm" onsubmit="handlePlayerSubmission(event)">
-                <div class="form-group-row">
+                <div class="group">
                     <label for="pName">Choose Your Name / Handle</label>
                     <input type="text" id="pName" required placeholder="Enter custom username">
                 </div>
-                <div class="form-group-row">
+                <div class="group">
                     <label for="pPass">Choose Your Hidden Password</label>
                     <input type="password" id="pPass" required placeholder="••••••••">
                 </div>
-                <button type="submit" id="submitButtonAction" class="core-action-btn btn-blue">Send Request To Terminal</button>
+                <button type="submit" id="submitButtonAction" class="btn btn-blue">Log In / Request Entry</button>
             </form>
 
-            <!-- LIVE MANAGEMENT MODERATOR CONSOLE -->
-            <section id="decisionControlModule" class="owner-moderator-panel">
-                <div class="owner-prompt-line">
+            <div id="decisionControlModule" class="owner-control-module">
+                <div class="owner-prompt">
                     What to make <span><span id="targetPlayerNameText">Player</span></span>?
                 </div>
-                <div class="decision-button-grid">
-                    <button class="rank-btn btn-green" onclick="assignRankLevelDecision('normal')">Normal</button>
-                    <button class="rank-btn btn-blue-opt" onclick="assignRankLevelDecision('coadmin')">Co Admin</button>
-                    <button class="rank-btn btn-red" onclick="assignRankLevelDecision('admin')">Admin</button>
+                <div class="action-grid">
+                    <button class="btn-green" onclick="assignRankLevelDecision('normal')">Normal</button>
+                    <button class="btn-blue-opt" onclick="assignRankLevelDecision('coadmin')">Co Admin</button>
+                    <button class="btn-red" onclick="assignRankLevelDecision('admin')">Admin</button>
                 </div>
-            </section>
-        </main>
+            </div>
+        </div>
 
-        <!-- RIGHT COLUMN: DYNAMIC DIGITAL CARD & HISTORICAL LEDGER -->
-        <aside class="panel-box rendering-column">
-            
-            <div id="activeKeycardNode" class="digital-keycard card-initial">
-                <div class="card-top-header">
+        <div class="box display-view">
+            <div id="activeKeycardNode" class="keycard card-initial">
+                <div class="card-header">
                     <span>★ BROS HQ ACCESS PASS ★</span>
-                    <span>SEC_V9.2</span>
+                    <span>SEC_V12.0</span>
                 </div>
                 <div class="card-main-body">
-                    <div class="card-data-line"><strong>HOLDER NAME:</strong> <span id="cardNameField">AWAITING REQUEST...</span></div>
-                    <div class="card-data-line"><strong>LEVEL COLOR:</strong> <span id="cardLevelField">PENDING ROUTINE</span></div>
-                    <div class="card-data-line"><strong>SECRET KEY:</strong> <span id="cardPassField" class="security-blackout" onclick="this.classList.toggle('reveal')">••••••••</span></div>
+                    <div class="card-field"><strong>HOLDER NAME:</strong> <span id="cardNameField">AWAITING SYSTEM LOGIN...</span></div>
+                    <div class="card-field"><strong>LEVEL COLOR:</strong> <span id="cardLevelField">PENDING ROUTINE</span></div>
+                    <div class="card-field"><strong>SECRET KEY:</strong> <span id="cardPassField" class="blackout" onclick="this.classList.toggle('reveal')">••••••••</span></div>
                 </div>
-                <div class="card-bottom-footer">
+                <div class="card-footer">
                     <span>VALIDATION CODE:</span>
                     <strong>kfcisbad123</strong>
                 </div>
             </div>
 
-            <!-- ENHANCED LEDGER REGISTRY WITH PASSWORD REVEAL OVERRIDE -->
-            <section class="ledger-wrapper-block">
-                <div class="ledger-header-flex">
+            <div class="ledger-box">
+                <div class="ledger-box-header">
                     <h3>🗄️ Main Registered HQ Ledger Logs</h3>
                     <button type="button" class="reveal-master-btn" onclick="toggleMasterPasswordVisibility(this)">Show Saved Passwords</button>
                 </div>
-                <div id="ledgerLogsContainer" class="ledger-scroll-view">
-                    <div class="empty-log-state-msg">Ledger log memory offline. Send entry request.</div>
+                <div id="ledgerLogsContainer" class="ledger-view">
+                    <div class="empty-msg">Ledger log memory module offline. Send entry request.</div>
                 </div>
-            </section>
-
-        </aside>
+            </div>
+        </div>
     </div>
 
-    <!-- Script sequence load lines -->
-    <script src="database-engine.js"></script>
-    <script src="terminal-logic.js"></script>
-</body>
-</html>
+    <script>
+        let holdTokenForDecisionCycle = null;
+        let registeredCrewDatabase = JSON.parse(localStorage.getItem("TheBrosInstantRegistry_V12")) || [];
+
