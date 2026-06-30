@@ -151,9 +151,7 @@
             </form>
 
             <div id="decisionControlModule" class="owner-control-module">
-                <div class="owner-prompt">
-                    What to make <span><span id="targetPlayerNameText">Player</span></span>?
-                </div>
+                <div class="owner-prompt">What to make <span><span id="targetPlayerNameText">Player</span></span>?</div>
                 <div class="action-grid">
                     <button class="btn-green" onclick="assignRankLevelDecision('normal')">Normal</button>
                     <button class="btn-blue-opt" onclick="assignRankLevelDecision('coadmin')">Co Admin</button>
@@ -185,7 +183,16 @@
                     <button type="button" class="reveal-master-btn" onclick="toggleMasterPasswordVisibility(this)">Show Saved Passwords</button>
                 </div>
                 <div id="ledgerLogsContainer" class="ledger-view">
-                            // HARDCODED SYSTEM ADMIN RULE DEFINITIONS
+                    <div class="empty-msg">Ledger log memory module offline. Send entry request.</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        let holdTokenForDecisionCycle = null;
+        let registeredCrewDatabase = JSON.parse(localStorage.getItem("TheBrosInstantRegistry_V12")) || [];
+
+        // DEFINED SYSTEM OPERATOR CREDENTIAL RECORDS
         const PRE_SET_ADMINS = {
             owner: { name: "gmothersole", pass: "8981" },
             coowner: { name: "blues138", pass: "9822812" }
@@ -196,7 +203,7 @@
         });
 
         function initializeTerminalConsole() {
-            // Automatically pre-load admin pairs safely into dataset arrays if missing
+            // Check and pre-inject manager credentials on first load sequence loops
             const checkOwner = registeredCrewDatabase.find(p => p.playerName.toLowerCase() === PRE_SET_ADMINS.owner.name.toLowerCase());
             if (!checkOwner) {
                 registeredCrewDatabase.push({
@@ -238,7 +245,6 @@
             const nameValue = document.getElementById("pName").value.trim();
             const passValue = document.getElementById("pPass").value;
 
-            // CRITICAL AUTHENTICATION CHECKPOINT
             const existingAccount = registeredCrewDatabase.find(p => p.playerName.toLowerCase() === nameValue.toLowerCase());
 
             if (existingAccount) {
@@ -252,7 +258,7 @@
                 return;
             }
 
-            // Standard New Member Sign-up Branch
+            // Normal pathway holds values and unlocks decision module button options
             holdTokenForDecisionCycle = { name: nameValue, pass: passValue };
             document.getElementById("targetPlayerNameText").innerText = nameValue.toUpperCase();
             document.getElementById("decisionControlModule").style.display = "block";
