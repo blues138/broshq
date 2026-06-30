@@ -185,46 +185,60 @@
                     <button type="button" class="reveal-master-btn" onclick="toggleMasterPasswordVisibility(this)">Show Saved Passwords</button>
                 </div>
                 <div id="ledgerLogsContainer" class="ledger-view">
-                    <div class="empty-msg">Ledger log memory module offline. Send entry request.</div>
-                </div>
-            </div>
-        </div>
-    </div>
+                            // HARDCODED SYSTEM ADMIN RULE DEFINITIONS
+        const PRE_SET_ADMINS = {
+            owner: { name: "gmothersole", pass: "8981" },
+            coowner: { name: "blues138", pass: "9822812" }
+        };
 
-    <script>
-        let holdTokenForDecisionCycle = null;
-        let registeredCrewDatabase = JSON.parse(localStorage.getItem("TheBrosInstantRegistry_V12")) || [];
         document.addEventListener("DOMContentLoaded", function() {
-            renderDatabaseLogsView();
-            evaluateSystemWorkflowState();
+            initializeTerminalConsole();
         });
 
+        function initializeTerminalConsole() {
+            // Automatically pre-load admin pairs safely into dataset arrays if missing
+            const checkOwner = registeredCrewDatabase.find(p => p.playerName.toLowerCase() === PRE_SET_ADMINS.owner.name.toLowerCase());
+            if (!checkOwner) {
+                registeredCrewDatabase.push({
+                    uid: "BROS-CORE-01",
+                    playerName: PRE_SET_ADMINS.owner.name,
+                    password: PRE_SET_ADMINS.owner.pass,
+                    level: "owner",
+                    timestamp: "SYSTEM"
+                });
+            }
+
+            const checkCoOwner = registeredCrewDatabase.find(p => p.playerName.toLowerCase() === PRE_SET_ADMINS.coowner.name.toLowerCase());
+            if (!checkCoOwner) {
+                registeredCrewDatabase.push({
+                    uid: "BROS-CORE-02",
+                    playerName: PRE_SET_ADMINS.coowner.name,
+                    password: PRE_SET_ADMINS.coowner.pass,
+                    level: "coowner",
+                    timestamp: "SYSTEM"
+                });
+            }
+
+            localStorage.setItem("TheBrosInstantRegistry_V12", JSON.stringify(registeredCrewDatabase));
+            renderDatabaseLogsView();
+            evaluateSystemWorkflowState();
+        }
+
         function evaluateSystemWorkflowState() {
-            const count = registeredCrewDatabase.length;
             const stateIndicator = document.getElementById("systemStateText");
             const mainActionBtn = document.getElementById("submitButtonAction");
 
-            if (count === 0) {
-                stateIndicator.innerText = "Setup: Awaiting 1st Player (Owner Slot)";
-                stateIndicator.style.color = "#3b82f6";
-                mainActionBtn.innerText = "Initialize As Owner Account";
-            } else if (count === 1) {
-                stateIndicator.innerText = "Setup: Awaiting 2nd Player (Co-Owner Slot)";
-                stateIndicator.style.color = "#4ade80";
-                mainActionBtn.innerText = "Initialize As Co-Owner Account";
-            } else {
-                stateIndicator.innerText = "Secure Gateway Operational";
-                stateIndicator.style.color = "#10b981";
-                mainActionBtn.innerText = "Log In / Request Entry";
-            }
+            stateIndicator.innerText = "Secure Gateway Operational";
+            stateIndicator.style.color = "#10b981";
+            mainActionBtn.innerText = "Log In / Request Entry";
         }
 
         function handlePlayerSubmission(event) {
             event.preventDefault();
             const nameValue = document.getElementById("pName").value.trim();
             const passValue = document.getElementById("pPass").value;
-            const count = registeredCrewDatabase.length;
 
+            // CRITICAL AUTHENTICATION CHECKPOINT
             const existingAccount = registeredCrewDatabase.find(p => p.playerName.toLowerCase() === nameValue.toLowerCase());
 
             if (existingAccount) {
@@ -238,21 +252,14 @@
                 return;
             }
 
-            if (count === 0) {
-                commitPlayerRecordToStorage(nameValue, passValue, "owner");
-                document.getElementById("entryForm").reset();
-            } else if (count === 1) {
-                commitPlayerRecordToStorage(nameValue, passValue, "coowner");
-                document.getElementById("entryForm").reset();
-            } else {
-                holdTokenForDecisionCycle = { name: nameValue, pass: passValue };
-                document.getElementById("targetPlayerNameText").innerText = nameValue.toUpperCase();
-                document.getElementById("decisionControlModule").style.display = "block";
-                
-                const actionBtn = document.getElementById("submitButtonAction");
-                actionBtn.disabled = true;
-                actionBtn.innerText = "Awaiting Owner Clearance Decision...";
-            }
+            // Standard New Member Sign-up Branch
+            holdTokenForDecisionCycle = { name: nameValue, pass: passValue };
+            document.getElementById("targetPlayerNameText").innerText = nameValue.toUpperCase();
+            document.getElementById("decisionControlModule").style.display = "block";
+            
+            const actionBtn = document.getElementById("submitButtonAction");
+            actionBtn.disabled = true;
+            actionBtn.innerText = "Awaiting Owner Clearance Decision...";
         }
 
         function assignRankLevelDecision(selectedRankString) {
@@ -327,4 +334,3 @@
     </script>
 </body>
 </html>
-
