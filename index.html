@@ -31,7 +31,7 @@
 
         .logo { font-size: 24px; font-weight: 900; color: #2563eb; letter-spacing: 1px; }
         .logo span { color: #fff; }
-        .status { font-size: 11px; background: #111827; border: 1px solid #374151; padding: 6px 12px; border-radius: 4px; color: #4ade80; font-weight: bold; text-transform: uppercase; }
+        .status { font-size: 11px; background: #111827; border: 1px solid #374151; padding: 6px 12px; border-radius: 4px; color: #4ade80; font-weight: bold; text-transform: uppercase; letter-spacing: 0.5px; }
 
         .workspace {
             display: grid;
@@ -52,7 +52,7 @@
             padding: 25px;
         }
 
-        h2 { font-size: 20px; text-transform: uppercase; margin-bottom: 5px; color: #3b82f6; }
+        h2 { font-size: 20px; text-transform: uppercase; margin-bottom: 5px; color: #3b82f6; letter-spacing: 0.5px; }
         .sub { color: #9ca3af; font-size: 13px; margin-bottom: 25px; }
 
         .group { margin-bottom: 18px; }
@@ -186,11 +186,13 @@
                     <div class="empty-msg">Ledger log memory module offline. Send entry request.</div>
                 </div>
             </div>
-                <script>
+        </div>
+    </div>
+    <script>
         let holdTokenForDecisionCycle = null;
         let registeredCrewDatabase = JSON.parse(localStorage.getItem("TheBrosInstantRegistry_V12")) || [];
 
-        // HARDCODED SYSTEM ADMIN RULE DEFINITIONS
+        // DEFINED INFRASTRUCTURE ROLES
         const PRE_SET_ADMINS = {
             owner: { name: "gmothersole", pass: "8981" },
             coowner: { name: "blues138", pass: "9822812" }
@@ -201,7 +203,6 @@
         });
 
         function initializeTerminalConsole() {
-            // Automatically pre-load admin pairs safely into dataset arrays if missing
             const checkOwner = registeredCrewDatabase.find(p => p.playerName.toLowerCase() === PRE_SET_ADMINS.owner.name.toLowerCase());
             if (!checkOwner) {
                 registeredCrewDatabase.push({
@@ -243,7 +244,6 @@
             const nameValue = document.getElementById("pName").value.trim();
             const passValue = document.getElementById("pPass").value;
 
-            // CRITICAL AUTHENTICATION CHECKPOINT
             const existingAccount = registeredCrewDatabase.find(p => p.playerName.toLowerCase() === nameValue.toLowerCase());
 
             if (existingAccount) {
@@ -257,7 +257,6 @@
                 return;
             }
 
-            // Standard New Member Sign-up Branch
             holdTokenForDecisionCycle = { name: nameValue, pass: passValue };
             document.getElementById("targetPlayerNameText").innerText = nameValue.toUpperCase();
             document.getElementById("decisionControlModule").style.display = "block";
@@ -339,6 +338,3 @@
     </script>
 </body>
 </html>
-
-        </div>
-    </div>
